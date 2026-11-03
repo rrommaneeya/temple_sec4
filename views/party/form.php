@@ -1,0 +1,11 @@
+<h2><?= $action === 'create' ? 'เพิ่มผู้เข้าร่วมกิจกรรม' : 'แก้ไขผู้เข้าร่วมกิจกรรม' ?></h2>
+<?php foreach ($errors as $error): ?><p class="error" role="alert"><?= h($error) ?></p><?php endforeach; ?>
+<?php if (!$people || !$events): ?><p class="notice">ต้องมีข้อมูลบุคคลและกิจกรรมก่อนบันทึกผู้เข้าร่วม <a href="<?= h(personUrl('create')) ?>">เพิ่มบุคคล</a> หรือประสานผู้ดูแลกิจกรรมเพื่อเพิ่มกิจกรรม</p><?php endif; ?>
+<form method="post" action="<?= h(partyUrl($action === 'create' ? 'create' : 'edit', $id)) ?>" class="card">
+<input type="hidden" name="csrf" value="<?= h($_SESSION['csrf']) ?>">
+<label for="person_id">บุคคล *</label><select id="person_id" name="person_id" required><option value="">เลือกบุคคล</option><?php foreach ($people as $person): ?><option value="<?= h($person['id']) ?>" <?= (string) $data['person_id'] === (string) $person['id'] ? 'selected' : '' ?>><?= h('#' . $person['id'] . ' · ' . $person['first_name'] . ' ' . $person['last_name'] . ' (' . $person['person_type'] . ')') ?></option><?php endforeach; ?></select>
+<label for="event_id">กิจกรรม *</label><select id="event_id" name="event_id" required><option value="">เลือกกิจกรรม</option><?php foreach ($events as $event): ?><option value="<?= h($event['id']) ?>" <?= (string) $data['event_id'] === (string) $event['id'] ? 'selected' : '' ?>><?= h('#' . $event['id'] . ' · ' . $event['event_name'] . ' — ' . $event['temple_name']) ?></option><?php endforeach; ?></select>
+<label for="role">บทบาท *</label><input id="role" name="role" maxlength="100" required value="<?= h($data['role']) ?>" placeholder="เช่น ผู้บริจาค / ผู้จัดงาน">
+<p>บุคคลหนึ่งมีหลายบทบาทในกิจกรรมเดียวกันได้ แต่บทบาทเดิมซ้ำไม่ได้</p>
+<button <?= !$people || !$events ? 'disabled' : '' ?>>บันทึกผู้เข้าร่วม</button> <a href="<?= h(partyUrl()) ?>">กลับทะเบียนผู้เข้าร่วม</a></form>
+<?php if ($id): ?><section class="card"><h2>ลบผู้เข้าร่วมกิจกรรม #<?= h($id) ?></h2><p>กรุณาตรวจสอบข้อมูลก่อนยืนยัน ผู้เข้าร่วมที่มีเงินบริจาคอ้างอิงจะลบไม่ได้</p><form method="post" action="<?= h(partyUrl('delete', $id)) ?>"><input type="hidden" name="csrf" value="<?= h($_SESSION['csrf']) ?>"><button class="delete">ยืนยันลบผู้เข้าร่วม #<?= h($id) ?></button></form></section><?php endif; ?>

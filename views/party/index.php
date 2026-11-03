@@ -1,0 +1,5 @@
+<h2>ทะเบียนผู้เข้าร่วมกิจกรรม</h2><a class="button" href="<?= h(partyUrl('create')) ?>">+ เพิ่มผู้เข้าร่วม</a>
+<form method="get" class="card"><input type="hidden" name="page" value="party"><label for="q">ค้นหาชื่อ กิจกรรม วัด หรือบทบาท</label><input id="q" name="q" value="<?= h($term) ?>"><button>ค้นหา</button> <a href="<?= h(partyUrl()) ?>">ล้างการค้นหา</a></form>
+<p>พบ <?= count($parties) ?> รายการ</p><div class="table-wrap"><table><thead><tr><th>ID</th><th>ชื่อ–นามสกุล</th><th>กิจกรรม</th><th>วัด</th><th>บทบาท</th><th>จัดการ</th></tr></thead><tbody>
+<?php foreach ($parties as $party): ?><tr><td><?= h($party['id']) ?></td><td><?= h($party['first_name'] . ' ' . $party['last_name']) ?></td><td><?= h($party['event_name']) ?></td><td><?= h($party['temple_name']) ?></td><td><?= h($party['role']) ?></td><td><a href="<?= h(partyUrl('edit', $party['id'])) ?>">แก้ไข / ลบ</a></td></tr><?php endforeach; ?>
+<?php if (!$parties): ?><tr><td colspan="6">ยังไม่มีข้อมูลที่ตรงกับการค้นหา</td></tr><?php endif; ?></tbody></table></div>

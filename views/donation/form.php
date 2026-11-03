@@ -1,0 +1,14 @@
+<h2><?= $action === 'create' ? 'เพิ่มเงินบริจาค' : 'แก้ไขเงินบริจาค' ?></h2>
+<?php foreach ($errors as $error): ?><p class="error" role="alert"><?= h($error) ?></p><?php endforeach; ?>
+<?php if (!$events): ?><p class="notice">ยังไม่มีกิจกรรม กรุณาประสานผู้ดูแลกิจกรรมเพื่อเพิ่มข้อมูลก่อนบันทึกเงินบริจาค</p><?php endif; ?>
+<form method="post" action="<?= h(donationUrl($action === 'create' ? 'create' : 'edit',$id)) ?>" class="card">
+<input type="hidden" name="csrf" value="<?= h($_SESSION['csrf']) ?>">
+<label for="event_id">กิจกรรม *</label><select id="event_id" name="event_id" required><option value="">เลือกกิจกรรม</option><?php foreach ($events as $event): ?><option value="<?= h($event['id']) ?>" <?= (string)$data['event_id']===(string)$event['id'] ? 'selected' : '' ?>><?= h('#'.$event['id'].' · '.$event['event_name'].' / '.$event['temple_name']) ?></option><?php endforeach; ?></select>
+<label for="party_id">ผู้บริจาค (เว้นว่างได้)</label><select id="party_id" name="party_id"><option value="">ไม่ระบุผู้บริจาค</option><?php foreach ($parties as $party): ?><option data-event="<?= h($party['event_id']) ?>" value="<?= h($party['id']) ?>" <?= (string)$data['party_id']===(string)$party['id'] ? 'selected' : '' ?>><?= h('#'.$party['id'].' · '.$party['first_name'].' '.$party['last_name'].' ('.$party['role'].')') ?></option><?php endforeach; ?></select>
+<p id="party-help">เลือกได้เฉพาะผู้เข้าร่วมของกิจกรรมที่เลือก หากไม่มีรายชื่อ ให้เพิ่มในเมนูผู้เข้าร่วมกิจกรรมก่อน</p><noscript><p>กรุณาเปิด JavaScript เพื่อกรองรายชื่อ ระบบยังตรวจความสัมพันธ์ก่อนบันทึกทุกครั้ง</p></noscript>
+<label for="amount">จำนวนเงิน (บาท) *</label><input id="amount" name="amount" type="number" min="0.01" max="9999999999999.99" step="0.01" required value="<?= h($data['amount']) ?>">
+<label for="donation_date">วันที่บริจาค *</label><input id="donation_date" name="donation_date" type="date" min="1000-01-01" max="9999-12-31" required value="<?= h($data['donation_date']) ?>">
+<label for="payment_method">วิธีชำระ *</label><select id="payment_method" name="payment_method" required><option value="cash" <?= $data['payment_method']==='cash' ? 'selected' : '' ?>>เงินสด</option><option value="transfer" <?= $data['payment_method']==='transfer' ? 'selected' : '' ?>>เงินโอน</option></select>
+<button <?= !$events ? 'disabled' : '' ?>>บันทึกเงินบริจาค</button> <a href="<?= h(donationUrl()) ?>">กลับทะเบียนเงินบริจาค</a></form>
+<?php if ($id): ?><section class="card"><h2>ลบเงินบริจาค #<?= h($id) ?></h2><p>ตรวจสอบรายการก่อนยืนยัน รายการที่มีเอกสารการเงินอ้างอิงจะลบไม่ได้</p><form method="post" action="<?= h(donationUrl('delete',$id)) ?>"><input type="hidden" name="csrf" value="<?= h($_SESSION['csrf']) ?>"><button class="delete">ยืนยันลบรายการ #<?= h($id) ?></button></form></section><?php endif; ?>
+<script src="assets/donation.js" defer></script>
